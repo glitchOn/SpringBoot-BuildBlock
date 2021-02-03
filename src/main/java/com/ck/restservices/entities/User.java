@@ -1,9 +1,13 @@
 package com.ck.restservices.entities;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
@@ -34,6 +38,10 @@ public class User {
 	@Column(name="SSN",length=50,nullable=false,unique=true)
 	private String ssn;
 	
+	
+
+	@OneToMany(mappedBy="user",fetch=FetchType.LAZY)
+    private List<Order> order;
     
     public User() {
 	}
@@ -92,6 +100,13 @@ public class User {
 		this.ssn = ssn;
 	}
 	
+	public List<Order> getOrder() {
+		return order;
+	}
+
+	public void setOrder(List<Order> order) {
+		this.order = order;
+	}
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", userName=" + userName + ", firstName=" + firstName + ", lastname=" + lastname
