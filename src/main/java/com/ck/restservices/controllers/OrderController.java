@@ -19,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.ck.restservices.entities.Order;
 import com.ck.restservices.exceptions.UserNotFoundException;
 import com.ck.restservices.services.OrderService;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/users")
@@ -30,7 +31,12 @@ public class OrderController {
 	@GetMapping("/{id}/orders")
 	public List<Order> getAllOrders(@PathVariable("id") Long userId){
 		try {
-			return orderService.getAllOrder(userId);
+			List<Order> allOrders = orderService.getAllOrder(userId);
+			for (Order order : allOrders) {
+				order.add(linkTo(methodOn(OrderController.class).getAllOrders(userId)).withSelfRel());
+			}
+
+			return allOrders;
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}

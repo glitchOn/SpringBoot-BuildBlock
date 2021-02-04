@@ -11,8 +11,10 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import org.springframework.hateoas.RepresentationModel;
+
 @Entity
-public class User {
+public class User extends RepresentationModel<User>{
     
 	@Id
 	@GeneratedValue

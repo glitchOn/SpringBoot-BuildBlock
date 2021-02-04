@@ -27,6 +27,7 @@ import com.ck.restservices.exceptions.UserExistsException;
 import com.ck.restservices.exceptions.UserNameNotFoundException;
 import com.ck.restservices.exceptions.UserNotFoundException;
 import com.ck.restservices.services.UserService;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @Validated
@@ -66,10 +67,15 @@ public class UserController {
 	@PutMapping("/{id}")
 	public User updateUserById(@Min(1) @PathVariable("id") Long id ,@RequestBody User user) {
 		try {
-			return service.updateUserById(id, user);
-		} catch (UserNotFoundException e) {
+			 User updateUser= service.updateUserById(id, user);
+			 updateUser.add(linkTo(methodOn(UserController.class).updateUserById(user.getId(),user)).withSelfRel());
+			// updateUser.add(linkTo(methodOn(UserController.class).getUserById(user.getId())).withRel("/users"));
+			 updateUser.add(linkTo(methodOn(UserController.class).getUserByName(user.getUserName())).withRel("/users"));
+			return updateUser; 
+		} catch (UserNotFoundException | UserNameNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
+	
 	}
 
 	@DeleteMapping("/{id}")
@@ -85,9 +91,13 @@ public class UserController {
 	@GetMapping("byusername/{name}")
 	public User getUserByName(@PathVariable("name") String userName) throws UserNameNotFoundException {
 		User user =	service.findByUserName(userName);
+	
 		if(user ==null)
 			throw new UserNameNotFoundException("User with " +userName + "is not found");
-
+		
+		user.add(linkTo(methodOn(UserController.class).getUserByName(user.getUserName())).withSelfRel());
+		user.add(linkTo(methodOn(UserController.class).updateUserById(user.getId(),user)).withRel("updateUserById"));
+		user.add(linkTo(methodOn(UserController.class).getAllUsers()).withRel("Get All Users"));
 		return user;
 	}
 }
