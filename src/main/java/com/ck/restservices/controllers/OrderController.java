@@ -28,7 +28,6 @@ public class OrderController {
 	@Autowired
 	OrderService orderService;
 	
-	@GetMapping("/{id}/orders")
 	public List<Order> getAllOrders(@PathVariable("id") Long userId){
 		try {
 			List<Order> allOrders = orderService.getAllOrder(userId);
@@ -41,6 +40,7 @@ public class OrderController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
 	}
+	@GetMapping("/{id}/orders")
 	
 	@PostMapping("/{id}/orders")
 	public ResponseEntity<Void> createOrder(@PathVariable("id") Long userId, @RequestBody Order order, UriComponentsBuilder builder ){
